@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2016 David Pérez Cabrera <dperezcabrera@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -127,32 +127,61 @@ public class TexasHoldEmTablePanel extends javax.swing.JPanel implements IStrate
         int roundX = COMMUNITY_CARDS_POSITIONS[(COMMUNITY_CARDS_POSITIONS.length) / 2].x + CARDS_DIMENSION.width / 2;
         int roundY = COMMUNITY_CARDS_POSITIONS[0].y - 2 * PLAYER_PADDING;
         g2.setColor(TEXT_ROUND_COLOR);
-        textPrinter.setFont(PLAYER_STATE_FONT);
-        textPrinter.setVerticalAlign(TextPrinter.VerticalAlign.BOTTOM);
-        textPrinter.setHorizontalAlign(TextPrinter.HorizontalAlign.CENTER);
+        setTextPrinterAttributes(textPrinter, PLAYER_STATE_FONT, TextPrinter.VerticalAlign.BOTTOM, TextPrinter.HorizontalAlign.CENTER);
         textPrinter.print(g2, "Ronda " + round, roundX, roundY);
     }
 
     private void paintChips(Graphics2D g2) {
+        drawGraphics(g2);
+        printUsingTextPrinter(g2);
+    }
+
+    private void drawGraphics(Graphics2D g2) {
         Image chips = ImageManager.INSTANCE.getImage(CHIPS_PATH);
         g2.setColor(Color.BLACK);
-        textPrinter.setFont(DEFAULT_FONT);
-        textPrinter.setVerticalAlign(TextPrinter.VerticalAlign.TOP);
-        textPrinter.setHorizontalAlign(TextPrinter.HorizontalAlign.RIGHT);
         int x = CHIPS_POSITION.x - (pots.size() * POTS_POSITION_INCREMENT) / 2;
-        for (Long pot : pots) {
+        int j =0;
+        while(j < pots.size()){
             g2.drawImage(chips, x, CHIPS_POSITION.y, null);
-            textPrinter.print(g2, pot + DOLLAR, x + CHIPS_TEXT_POSITION_INCREMENT.x, CHIPS_POSITION.y + CHIPS_TEXT_POSITION_INCREMENT.y);
             x += POTS_POSITION_INCREMENT;
+            j++;
         }
-        for (int i = 0; i < players.length; i++) {
+        int i = 0;
+        while(i < players.length){
             if (players[i] != null && players[i].getBet() > betRound) {
                 Point p = PLAYER_BET_POSITIONS[i];
                 g2.drawImage(chips, p.x, p.y, null);
-                textPrinter.print(g2, (players[i].getBet() - betRound) + DOLLAR, p.x + CHIPS_TEXT_POSITION_INCREMENT.x, p.y + CHIPS_TEXT_POSITION_INCREMENT.y);
             }
+            i++;
         }
         g2.drawImage(ImageManager.INSTANCE.getImage(DEALER_PATH), PLAYER_BET_POSITIONS[dealer].x, PLAYER_BET_POSITIONS[dealer].y, null);
+    }
+
+    private void printUsingTextPrinter(Graphics2D g2) {
+        g2.setColor(Color.BLACK);
+        setTextPrinterAttributes(textPrinter, DEFAULT_FONT, TextPrinter.VerticalAlign.TOP, TextPrinter.HorizontalAlign.RIGHT);
+        int x = CHIPS_POSITION.x - (pots.size() * POTS_POSITION_INCREMENT) / 2;
+        int j =0;
+        while(j < pots.size()){
+            Long pot = pots.get(j);
+            textPrinter.print(g2, pot + DOLLAR, x + CHIPS_TEXT_POSITION_INCREMENT.x, CHIPS_POSITION.y + CHIPS_TEXT_POSITION_INCREMENT.y);
+            j++;
+        }
+
+        int i = 0;
+        while(i < players.length){
+            if (players[i] != null && players[i].getBet() > betRound) {
+                Point p = PLAYER_BET_POSITIONS[i];
+                textPrinter.print(g2, (players[i].getBet() - betRound) + DOLLAR, p.x + CHIPS_TEXT_POSITION_INCREMENT.x, p.y + CHIPS_TEXT_POSITION_INCREMENT.y);
+            }
+            i++;
+        }
+    }
+
+    private static void setTextPrinterAttributes(TextPrinter textPrinter, Font defaultFont, TextPrinter.VerticalAlign top, TextPrinter.HorizontalAlign right) {
+        textPrinter.setFont(defaultFont);
+        textPrinter.setVerticalAlign(top);
+        textPrinter.setHorizontalAlign(right);
     }
 
     private void setCommunityCards(List<Card> cards) {
@@ -190,9 +219,7 @@ public class TexasHoldEmTablePanel extends javax.swing.JPanel implements IStrate
                 if (bets[i] != null) {
                     String text = bets[i].name().replace("_", " ");
                     g2.setColor(borderPlayerColor);
-                    textPrinter.setFont(PLAYER_STATE_FONT);
-                    textPrinter.setVerticalAlign(TextPrinter.VerticalAlign.MIDDLE);
-                    textPrinter.setHorizontalAlign(TextPrinter.HorizontalAlign.CENTER);
+                    setTextPrinterAttributes(textPrinter, PLAYER_STATE_FONT, TextPrinter.VerticalAlign.MIDDLE, TextPrinter.HorizontalAlign.CENTER);
                     textPrinter.print(g2, text, playerPosition.x + PLAYER_DIMENSION.width / 2, playerPosition.y + PLAYER_DIMENSION.height - (PLAYER_PADDING + CARDS_DIMENSION.height / 2));
                 }
             } else {
@@ -200,15 +227,11 @@ public class TexasHoldEmTablePanel extends javax.swing.JPanel implements IStrate
                 g2.fillRoundRect(playerPosition.x, playerPosition.y, PLAYER_DIMENSION.width, PLAYER_DIMENSION.height, DEFAULT_ROUND_CORNER_SIZE, DEFAULT_ROUND_CORNER_SIZE);
             }
             g2.setColor(Color.white);
-            textPrinter.setFont(DEFAULT_FONT);
-            textPrinter.setVerticalAlign(TextPrinter.VerticalAlign.TOP);
-            textPrinter.setHorizontalAlign(TextPrinter.HorizontalAlign.CENTER);
+            setTextPrinterAttributes(textPrinter, DEFAULT_FONT, TextPrinter.VerticalAlign.TOP, TextPrinter.HorizontalAlign.CENTER);
             textPrinter.print(g2, players[i].getName(), playerPosition.x + PLAYER_DIMENSION.width / 2, playerPosition.y + PLAYER_PADDING);
             if (players[i].getChips() > 0) {
-                textPrinter.setFont(CHIPS_FONT);
+                setTextPrinterAttributes(textPrinter,CHIPS_FONT,TextPrinter.VerticalAlign.BOTTOM,TextPrinter.HorizontalAlign.RIGHT);
                 g2.setColor(borderPlayerColor);
-                textPrinter.setHorizontalAlign(TextPrinter.HorizontalAlign.RIGHT);
-                textPrinter.setVerticalAlign(TextPrinter.VerticalAlign.BOTTOM);
                 textPrinter.print(g2, players[i].getChips() + " $", playerPosition.x + PLAYER_DIMENSION.width - PLAYER_PADDING, playerPosition.y + PLAYER_DIMENSION.height - (2 * PLAYER_PADDING + CARDS_DIMENSION.height));
             }
         }
@@ -291,7 +314,7 @@ public class TexasHoldEmTablePanel extends javax.swing.JPanel implements IStrate
     private static boolean isActivePlayer(PlayerInfo p){
         return p != null && (p.isActive() || p.getState() == PlayerState.ALL_IN);
     }
-    
+
     private static int nextPlayerTurn(PlayerInfo[] players, BetCommandType[] bets, long maxBet, int currentPlayerTurn) {
         int i = (currentPlayerTurn + 1) % players.length;
         while (i != currentPlayerTurn) {
