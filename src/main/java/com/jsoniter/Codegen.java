@@ -160,30 +160,8 @@ class Codegen {
         }
         if (Map.class.isAssignableFrom(clazz)) {
             Type valueType = calculateValueType(typeArgs);
-
-            // co slice - begin
-            Type keyType = String.class;
-            if (typeArgs.length == 0) {
-            } else if (typeArgs.length == 2) {
-                    keyType = typeArgs[0];
-            } else {
-                    throw new IllegalArgumentException(
-                        "can not bind to generic collection without argument types, " +
-                                "try syntax like TypeLiteral<Map<String, String>>{}");
-            }
-            if (clazz == Map.class) {
-                if(implClazz == null) {
-                    clazz = HashMap.class;
-                } else {
-                    clazz = implClazz;
-                }
-            }
-            if (keyType == Object.class) {
-                keyType = String.class;
-            }
-            DefaultMapKeyDecoder.registerOrGetExisting(keyType);
-            // co-slice - end
-
+            Type keyType = calculateKeyType(typeArgs);
+            clazz = calculateClazz(typeArgs, clazz, implClazz, keyType);
             return GenericsHelper.createParameterizedType(new Type[]{keyType, valueType}, null, clazz);
         }
         if (implClazz != null) {
@@ -194,6 +172,38 @@ class Codegen {
             }
         }
         return type;
+    }
+
+    private static Class calculateClazz(Type[] typeArgs, Class clazz, Class implClazz, Type keyType) {
+        if (typeArgs.length == 0) {
+        } else if (typeArgs.length == 2) {
+        } else {
+                throw new IllegalArgumentException(
+                    "can not bind to generic collection without argument types, " +
+                            "try syntax like TypeLiteral<Map<String, String>>{}");
+        }
+        if (clazz == Map.class) {
+            if(implClazz == null) {
+                clazz = HashMap.class;
+            } else {
+                clazz = implClazz;
+            }
+        }
+
+        DefaultMapKeyDecoder.registerOrGetExisting(keyType);
+        return clazz;
+    }
+
+    private static Type calculateKeyType(Type[] typeArgs) {
+        Type keyType = String.class;
+        if (typeArgs.length == 0) {
+        } else if (typeArgs.length == 2) {
+            keyType = typeArgs[0];
+        }
+        if (keyType == Object.class) {
+            keyType = String.class;
+        }
+        return keyType;
     }
 
     private static void staticGen(String cacheKey, String source) throws IOException {
