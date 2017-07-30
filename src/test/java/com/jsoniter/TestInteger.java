@@ -69,23 +69,6 @@ public class TestInteger extends TestCase {
         }
     }
 
-    public void test_byte() throws IOException {
-        Byte val = JsonIterator.deserialize("120", Byte.class);
-        assertEquals(Byte.valueOf((byte) 120), val);
-        byte[] vals = JsonIterator.deserialize("[120]", byte[].class);
-        assertEquals((byte) 120, vals[0]);
-    }
-
-    @Category(StreamingCategory.class)
-    public void test_streaming() throws IOException {
-        isStreaming = true;
-        test_positive_negative_int();
-        test_positive_negative_long();
-        test_max_min_int();
-        test_max_min_long();
-        test_large_number();
-    }
-
     private int parseInt(String input) throws IOException {
         if (isStreaming) {
             JsonIterator iter = JsonIterator.parse(new ByteArrayInputStream(input.getBytes()), 2);

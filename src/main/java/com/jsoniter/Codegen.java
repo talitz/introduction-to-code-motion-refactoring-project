@@ -120,6 +120,24 @@ class Codegen {
         return generatedClassNames.contains(cacheKey);
     }
 
+    private static Type calculateValueType(Type[] typeArgs) {
+        Type valueType = Object.class;
+        if (typeArgs.length == 0) {
+        } else if (typeArgs.length == 2) {
+            valueType = typeArgs[1];
+        }
+        return valueType;
+    }
+
+    private static Type calculateKeyType(Type[] typeArgs) {
+        Type valueType = Object.class;
+        if (typeArgs.length == 0) {
+        } else if (typeArgs.length == 2) {
+            valueType = typeArgs[1];
+        }
+        return valueType;
+    }
+
     private static Type chooseImpl(Type type) {
         Type[] typeArgs = new Type[0];
         Class clazz;
@@ -150,25 +168,31 @@ class Codegen {
             return GenericsHelper.createParameterizedType(new Type[]{compType}, null, clazz);
         }
         if (Map.class.isAssignableFrom(clazz)) {
+            Type valueType = calculateValueType(typeArgs);
+
+            // co slice - begin
             Type keyType = String.class;
-            Type valueType = Object.class;
             if (typeArgs.length == 0) {
-                // default to Map<String, Object>
             } else if (typeArgs.length == 2) {
-                keyType = typeArgs[0];
-                valueType = typeArgs[1];
+                    keyType = typeArgs[0];
             } else {
-                throw new IllegalArgumentException(
+                    throw new IllegalArgumentException(
                         "can not bind to generic collection without argument types, " +
                                 "try syntax like TypeLiteral<Map<String, String>>{}");
             }
             if (clazz == Map.class) {
-                clazz = implClazz == null ? HashMap.class : implClazz;
+                if(implClazz == null) {
+                    clazz = HashMap.class;
+                } else {
+                    clazz = implClazz;
+                }
             }
             if (keyType == Object.class) {
                 keyType = String.class;
             }
             DefaultMapKeyDecoder.registerOrGetExisting(keyType);
+            // co-slice - end
+
             return GenericsHelper.createParameterizedType(new Type[]{keyType, valueType}, null, clazz);
         }
         if (implClazz != null) {

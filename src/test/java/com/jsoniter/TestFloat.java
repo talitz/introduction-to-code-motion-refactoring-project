@@ -49,13 +49,6 @@ public class TestFloat extends TestCase {
         assertEquals(Double.valueOf("8.37377E9"), v, 1000d);
     }
 
-    @Category(StreamingCategory.class)
-    public void test_streaming() throws IOException {
-        isStreaming = true;
-        test_positive_negative();
-        test_decimal_places();
-    }
-
     private float parseFloat(String input) throws IOException {
         if (isStreaming) {
             return JsonIterator.parse(new ByteArrayInputStream(input.getBytes()), 2).readFloat();

@@ -51,37 +51,6 @@ public class TestString extends TestCase {
         assertEquals("0123456789012345678901234567890123", iter.readString());
     }
 
-    @org.junit.experimental.categories.Category(StreamingCategory.class)
-    public void test_string_across_buffer() throws IOException {
-        JsonIterator iter = JsonIterator.parse(new ByteArrayInputStream("'hello''world'".replace('\'', '"').getBytes()), 2);
-        assertEquals("hello", iter.readString());
-        assertEquals("world", iter.readString());
-        iter = JsonIterator.parse(new ByteArrayInputStream("'hello''world'".replace('\'', '"').getBytes()), 2);
-        assertEquals("hello", iter.readStringAsSlice().toString());
-        assertEquals("world", iter.readStringAsSlice().toString());
-    }
-
-    @org.junit.experimental.categories.Category(StreamingCategory.class)
-    public void test_utf8() throws IOException {
-        byte[] bytes = {'"', (byte) 0xe4, (byte) 0xb8, (byte) 0xad, (byte) 0xe6, (byte) 0x96, (byte) 0x87, '"'};
-        JsonIterator iter = JsonIterator.parse(new ByteArrayInputStream(bytes), 2);
-        assertEquals("中文", iter.readString());
-    }
-
-    @org.junit.experimental.categories.Category(StreamingCategory.class)
-    public void test_normal_escape() throws IOException {
-        byte[] bytes = {'"', (byte) '\\', (byte) 't', '"'};
-        JsonIterator iter = JsonIterator.parse(new ByteArrayInputStream(bytes), 2);
-        assertEquals("\t", iter.readString());
-    }
-
-    @org.junit.experimental.categories.Category(StreamingCategory.class)
-    public void test_unicode_escape() throws IOException {
-        byte[] bytes = {'"', (byte) '\\', (byte) 'u', (byte) '4', (byte) 'e', (byte) '2', (byte) 'd', '"'};
-        JsonIterator iter = JsonIterator.parse(new ByteArrayInputStream(bytes), 2);
-        assertEquals("中", iter.readString());
-    }
-
     public void test_null_string() throws IOException {
         JsonIterator iter = JsonIterator.parse("null".replace('\'', '"'));
         assertEquals(null, iter.readString());
@@ -97,12 +66,6 @@ public class TestString extends TestCase {
 
     public void test_long_string() throws IOException {
         JsonIterator iter = JsonIterator.parse("\"[\\\"LL\\\",\\\"MM\\\\\\/LW\\\",\\\"JY\\\",\\\"S\\\",\\\"C\\\",\\\"IN\\\",\\\"ME \\\\\\/ LE\\\"]\"");
-        assertEquals("[\"LL\",\"MM\\/LW\",\"JY\",\"S\",\"C\",\"IN\",\"ME \\/ LE\"]", iter.readString());
-    }
-
-    @Category(StreamingCategory.class)
-    public void test_long_string_in_streaming() throws IOException {
-        JsonIterator iter = JsonIterator.parse(new ByteArrayInputStream("\"[\\\"LL\\\",\\\"MM\\\\\\/LW\\\",\\\"JY\\\",\\\"S\\\",\\\"C\\\",\\\"IN\\\",\\\"ME \\\\\\/ LE\\\"]\"".getBytes()), 2);
         assertEquals("[\"LL\",\"MM\\/LW\",\"JY\",\"S\",\"C\",\"IN\",\"ME \\/ LE\"]", iter.readString());
     }
 }

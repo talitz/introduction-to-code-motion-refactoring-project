@@ -244,25 +244,10 @@ public class TestGson extends TestCase {
         public float field;
     }
 
-    public void test_null_as_float() {
-        Gson gson = new Gson();
-        TestObject9 obj = gson.fromJson("{\"field\":null}", TestObject9.class);
-        assertEquals(0.0f, obj.field);
-        GsonCompatibilityMode config = new GsonCompatibilityMode.Builder().build();
-        obj = JsonIterator.deserialize(config, "{\"field\":null}", TestObject9.class);
-        assertEquals(0.0f, obj.field);
-    }
+
 
     public static class TestObject10 {
         public double field;
     }
 
-    public void test_null_as_double() {
-        Gson gson = new Gson();
-        TestObject10 obj = gson.fromJson("{\"field\":null}", TestObject10.class);
-        assertEquals(0.0d, obj.field);
-        GsonCompatibilityMode config = new GsonCompatibilityMode.Builder().build();
-        obj = JsonIterator.deserialize(config, "{\"field\":null}", TestObject10.class);
-        assertEquals(0.0d, obj.field);
-    }
 }

@@ -111,12 +111,6 @@ public class TestObject extends TestCase {
         public String inheritedField;
     }
 
-    public void test_inheritance() throws IOException {
-        JsonIterator iter = JsonIterator.parse("{'inheritedField': 'hello'}".replace('\'', '"'));
-        InheritedObject inheritedObject = iter.read(InheritedObject.class);
-        assertEquals("hello", inheritedObject.inheritedField);
-    }
-
     public void test_incomplete_field_name() throws IOException {
         try {
             JsonIterator.parse("{\"abc").read(InheritedObject.class);

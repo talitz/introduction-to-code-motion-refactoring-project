@@ -359,18 +359,6 @@ public class TestObject extends TestCase {
         public char e;
     }
 
-    public void test_omit_default() {
-        Config cfg = new Config.Builder()
-                .omitDefaultValue(true)
-                .build();
-        assertEquals("{\"l\":1,\"d\":1}", JsonStream.serialize(cfg, new TestObject17()));
-        cfg = new Config.Builder()
-                .omitDefaultValue(true)
-                .encodingMode(EncodingMode.DYNAMIC_MODE)
-                .build();
-        assertEquals("{\"l\":1,\"d\":1}", JsonStream.serialize(cfg, new TestObject17()));
-    }
-
     public static class TestObject18 {
         @JsonProperty(defaultValueToOmit = "true")
         public boolean b = true;
@@ -426,8 +414,4 @@ public class TestObject extends TestCase {
         }
     }
 
-    public void test_transient_field_getter() {
-        String output = JsonStream.serialize(new TestObject19());
-        assertEquals("{}", output);
-    }
 }

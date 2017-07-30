@@ -43,29 +43,4 @@ public class TestMap extends TestCase {
         public int Field;
     }
 
-    public void test_MapKeyCodec() {
-        JsoniterSpi.registerMapKeyDecoder(TestObject1.class, new MapKeyDecoder() {
-            @Override
-            public Object decode(Slice encodedMapKey) {
-                Integer field = Integer.valueOf(encodedMapKey.toString());
-                TestObject1 obj = new TestObject1();
-                obj.Field = field;
-                return obj;
-            }
-        });
-        Map<TestObject1, Object> map = JsonIterator.deserialize("{\"100\":null}", new TypeLiteral<Map<TestObject1, Object>>() {
-        });
-        ArrayList<TestObject1> keys = new ArrayList<TestObject1>(map.keySet());
-        assertEquals(1, keys.size());
-        assertEquals(100, keys.get(0).Field);
-        // in new config
-        map = JsonIterator.deserialize(
-                new GsonCompatibilityMode.Builder().build(),
-                "{\"100\":null}", new TypeLiteral<Map<TestObject1, Object>>() {
-                });
-        keys = new ArrayList<TestObject1>(map.keySet());
-        assertEquals(1, keys.size());
-        assertEquals(100, keys.get(0).Field);
-    }
-
 }

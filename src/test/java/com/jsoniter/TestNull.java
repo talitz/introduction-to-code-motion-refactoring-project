@@ -26,18 +26,8 @@ public class TestNull extends TestCase {
         public Float field;
     }
 
-    public void test_null_as_Float() {
-        TestObject2 val = JsonIterator.deserialize("{\"field\":null}", TestObject2.class);
-        assertNull(val.field);
-    }
-
     public static class TestObject3 {
         public Double field;
-    }
-
-    public void test_null_as_Double() {
-        TestObject3 val = JsonIterator.deserialize("{\"field\":null}", TestObject3.class);
-        assertNull(val.field);
     }
 
     public static class TestObject4 {
