@@ -129,15 +129,6 @@ class Codegen {
         return valueType;
     }
 
-    private static Type calculateKeyType(Type[] typeArgs) {
-        Type valueType = Object.class;
-        if (typeArgs.length == 0) {
-        } else if (typeArgs.length == 2) {
-            valueType = typeArgs[1];
-        }
-        return valueType;
-    }
-
     private static Type chooseImpl(Type type) {
         Type[] typeArgs = new Type[0];
         Class clazz;
