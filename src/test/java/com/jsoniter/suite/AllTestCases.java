@@ -22,7 +22,7 @@ import org.junit.runners.Suite;
         TestAnnotation.class,
         com.jsoniter.output.TestGenerics.class,
         TestCustomizeType.class, TestDemo.class,
-        TestExisting.class, TestGenerics.class, TestGenerics.class, TestIO.class,
+        TestExisting.class, TestGenerics.class, TestGenerics.class,
         TestNested.class,
         com.jsoniter.output.TestNested.class,
         TestObject.class,
