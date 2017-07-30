@@ -1,10 +1,7 @@
-[![License](http://img.shields.io/:license-gpl3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
-[![Build Status](https://travis-ci.org/dperezcabrera/jpoker.svg?branch=master)](https://travis-ci.org/dperezcabrera/jpoker)
-[![Coverage Status](https://coveralls.io/repos/github/dperezcabrera/jpoker/badge.svg?branch=master)](https://coveralls.io/github/dperezcabrera/jpoker?branch=master)
-[![GitHub issues](https://img.shields.io/github/issues-raw/dperezcabrera/jpoker.svg?maxAge=2592000)](https://github.com/dperezcabrera/jpoker/issues)
+[![Build Status](https://travis-ci.org/json-iterator/java.svg?branch=master)](https://travis-ci.org/json-iterator/java)
+[![codecov](https://codecov.io/gh/json-iterator/java/branch/master/graph/badge.svg)](https://codecov.io/gh/json-iterator/java)
+[![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/json-iterator/java/master/LICENSE)
+[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/json-iterator/Lobby)
 
-# JPoker
+Documentation : [http://jsoniter.com/java-features.html](http://jsoniter.com/java-features.html)
 
-A simple poker game with gui.
-
-[Manual](http://www.javahispano.org/portada/2015/2/2/nuevo-tutorial-desarrollando-con-java-8.html)
