@@ -178,7 +178,7 @@ class Codegen {
         if (typeArgs.length == 0) {
         } else if (typeArgs.length == 2) {
         } else {
-                throw new IllegalArgumentException(
+            throw new IllegalArgumentException(
                     "can not bind to generic collection without argument types, " +
                             "try syntax like TypeLiteral<Map<String, String>>{}");
         }

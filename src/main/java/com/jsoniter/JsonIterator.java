@@ -243,17 +243,27 @@ public class JsonIterator implements Closeable {
     }
 
     public final BigInteger readBigInteger() throws IOException {
-        // skip whitespace by read next
         ValueType valueType = whatIsNext();
-        if (valueType == ValueType.NULL) {
-            skip();
-            return null;
-        }
-        if (valueType != ValueType.NUMBER) {
-            throw reportError("readBigDecimal", "not number");
-        }
-        return new BigInteger(IterImplForStreaming.readNumber(this));
+        skipBigIntegerModifier(valueType);
+        return getBigIntegerQuery(valueType);
     }
+    private void skipBigIntegerModifier(ValueType valueType) throws IOException {
+            if (valueType == ValueType.NULL) {
+                skip();
+                return;
+            }
+            if (valueType != ValueType.NUMBER) {
+                throw reportError("readBigDecimal", "not number");
+            }
+    }
+    private BigInteger getBigIntegerQuery(ValueType valueType) throws IOException {
+            // skip whitespace by read next
+            if (valueType == ValueType.NULL) {
+                return null;
+            }
+            return new BigInteger(IterImplForStreaming.readNumber(this));
+    }
+
 
     public final Any readAny() throws IOException {
         try {
