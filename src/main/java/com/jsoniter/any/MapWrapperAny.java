@@ -95,7 +95,7 @@ class MapWrapperAny extends Any {
         return retVal;
     }
 
-    private Any getAny(Object[] keys, int idx, Any retVal, Any child) {
+    public static Any getAny(Object[] keys, int idx, Any retVal, Any child) {
         if(retVal == null) {
                 return child.get(keys, idx + 1);
         }
@@ -193,7 +193,7 @@ class MapWrapperAny extends Any {
         }
     }
 
-    private class CalculateValueByCache {
+    public class CalculateValueByCache {
         private Object[] keys;
         private int idx;
         private Any retVal;
