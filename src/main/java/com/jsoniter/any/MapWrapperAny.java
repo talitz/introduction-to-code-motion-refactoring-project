@@ -84,23 +84,15 @@ class MapWrapperAny extends Any {
         return fillCacheUntil(key);
     }
 
-    @Override
-    public Any get(Object[] keys, int idx) {
-        Any retVal,child = null;
-
-        //before
-        fillCache();
-
-        //marked
-        body:
+    public Any marked(Object[] keys, int idx,Any retVal,Any child) {
+        markedBody:
         {
             if (idx == keys.length) {
                 retVal = this;
-                break body;
+                break markedBody;
             }
             Object key = keys[idx];
             if (isWildcard(key)) {
-
                 HashMap<String, Any> result = new HashMap<String, Any>();
                 Iterator<Map.Entry<String, Any>> it = cache.entrySet().iterator();
                 while (it.hasNext()) {
@@ -111,20 +103,33 @@ class MapWrapperAny extends Any {
                     }
                 }
                 retVal = Any.rewrap(result);
-                break body;
+                break markedBody;
             }
             child = fillCacheUntil(key);
             if (child == null) {
                 retVal = new NotFoundAny(keys, idx, object());
-                break body;
+                break markedBody;
             }
         }
-        //after
-        body2: {
-            retVal = child.get(keys, idx + 1);
-            break body2;
-        }
+        return retVal;
+    }
 
+    @Override
+    public Any get(Object[] keys, int idx) {
+        Any retVal = null,child = null;
+        //before
+        fillCache();
+
+        retVal = marked(keys,idx,retVal,child); //marked
+
+        //after
+        if(retVal == null) {
+            afterBody:
+            {
+                retVal = child.get(keys, idx + 1);
+                break afterBody;
+            }
+        }
         return retVal;
     }
 
