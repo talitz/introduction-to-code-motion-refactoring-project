@@ -86,26 +86,37 @@ class MapWrapperAny extends Any {
 
     @Override
     public Any get(Object[] keys, int idx) {
-        if (idx == keys.length) {
-            return this;
-        }
-        Object key = keys[idx];
-        if (isWildcard(key)) {
-            fillCache();
-            HashMap<String, Any> result = new HashMap<String, Any>();
-            for (Map.Entry<String, Any> entry : cache.entrySet()) {
-                Any mapped = entry.getValue().get(keys, idx + 1);
-                if (mapped.valueType() != ValueType.INVALID) {
-                    result.put(entry.getKey(), mapped);
-                }
+        Any retVal;
+        body:
+        {
+            if (idx == keys.length) {
+                retVal = this;
+                break body;
             }
-            return Any.rewrap(result);
+            Object key = keys[idx];
+            if (isWildcard(key)) {
+                fillCache();
+                HashMap<String, Any> result = new HashMap<String, Any>();
+                Iterator<Map.Entry<String,Any>> it = cache.entrySet().iterator();
+                while(it.hasNext()) {
+                    Map.Entry<String,Any> entry = it.next();
+                    Any mapped = entry.getValue().get(keys, idx + 1);
+                    if (mapped.valueType() != ValueType.INVALID) {
+                        result.put(entry.getKey(), mapped);
+                    }
+                }
+                retVal = Any.rewrap(result);
+                break body;
+            }
+            Any child = fillCacheUntil(key);
+            if (child == null) {
+                retVal = new NotFoundAny(keys, idx, object());
+                break body;
+            }
+            retVal = child.get(keys, idx + 1);
+            break body;
         }
-        Any child = fillCacheUntil(key);
-        if (child == null) {
-            return new NotFoundAny(keys, idx, object());
-        }
-        return child.get(keys, idx + 1);
+        return retVal;
     }
 
     @Override
