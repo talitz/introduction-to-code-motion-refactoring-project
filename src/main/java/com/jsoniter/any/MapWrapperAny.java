@@ -84,12 +84,9 @@ class MapWrapperAny extends Any {
         return fillCacheUntil(key);
     }
 
-    public Any marked(Object[] keys, int idx,Any retVal,Any child) {
-        markedBody:
-        {
+    public Any marked(Object[] keys, int idx,Any child) {
             if (idx == keys.length) {
-                retVal = this;
-                break markedBody;
+                return this;
             }
             Object key = keys[idx];
             if (isWildcard(key)) {
@@ -102,16 +99,13 @@ class MapWrapperAny extends Any {
                         result.put(entry.getKey(), mapped);
                     }
                 }
-                retVal = Any.rewrap(result);
-                break markedBody;
+                return Any.rewrap(result);
             }
             child = fillCacheUntil(key);
             if (child == null) {
-                retVal = new NotFoundAny(keys, idx, object());
-                break markedBody;
+                return new NotFoundAny(keys, idx, object());
             }
-        }
-        return retVal;
+            return null;
     }
 
     @Override
@@ -120,7 +114,7 @@ class MapWrapperAny extends Any {
         //before
         fillCache();
 
-        retVal = marked(keys,idx,retVal,child); //marked
+        retVal = marked(keys,idx,child); //marked
 
         //after
         if(retVal == null) {
