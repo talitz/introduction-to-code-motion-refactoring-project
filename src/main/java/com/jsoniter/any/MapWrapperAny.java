@@ -87,20 +87,17 @@ class MapWrapperAny extends Any {
     @Override
     public Any get(Object[] keys, int idx) {
         Any retVal = null,child = null;
-
         fillCache(); //before
-
-        //marked
-        CalculateValueByCache calculateValueByCache = new CalculateValueByCache(keys, idx, retVal, child).invoke();
+        CalculateValueByCache calculateValueByCache = new CalculateValueByCache(keys, idx, retVal, child).invoke();//marked
         retVal = calculateValueByCache.getRetVal();
         child = calculateValueByCache.getChild();
+        retVal = getAny(keys, idx, retVal, child); //after
+        return retVal;
+    }
 
-        //after
+    private Any getAny(Object[] keys, int idx, Any retVal, Any child) {
         if(retVal == null) {
-            afterBody: {
-                retVal = child.get(keys, idx + 1);
-                break afterBody;
-            }
+                return child.get(keys, idx + 1);
         }
         return retVal;
     }
