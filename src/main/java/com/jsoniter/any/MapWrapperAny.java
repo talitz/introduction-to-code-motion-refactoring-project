@@ -84,47 +84,32 @@ class MapWrapperAny extends Any {
         return fillCacheUntil(key);
     }
 
-    public Any marked(Object[] keys, int idx,Any child) {
-            if (idx == keys.length) {
-                return this;
-            }
-            Object key = keys[idx];
-            if (isWildcard(key)) {
-                HashMap<String, Any> result = new HashMap<String, Any>();
-                Iterator<Map.Entry<String, Any>> it = cache.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry<String, Any> entry = it.next();
-                    Any mapped = entry.getValue().get(keys, idx + 1);
-                    if (mapped.valueType() != ValueType.INVALID) {
-                        result.put(entry.getKey(), mapped);
-                    }
-                }
-                return Any.rewrap(result);
-            }
-            child = fillCacheUntil(key);
-            if (child == null) {
-                return new NotFoundAny(keys, idx, object());
-            }
-            return null;
-    }
-
     @Override
     public Any get(Object[] keys, int idx) {
         Any retVal = null,child = null;
-        //before
-        fillCache();
 
-        retVal = marked(keys,idx,child); //marked
+        fillCache(); //before
+
+        //marked
+        CalculateValueByCache calculateValueByCache = new CalculateValueByCache(keys, idx, retVal, child).invoke();
+        retVal = calculateValueByCache.getRetVal();
+        child = calculateValueByCache.getChild();
 
         //after
         if(retVal == null) {
-            afterBody:
-            {
+            afterBody: {
                 retVal = child.get(keys, idx + 1);
                 break afterBody;
             }
         }
         return retVal;
+    }
+
+    public Any after(Object[] keys, int idx,Any retVal,NotFoundAny child) {
+        if(retVal == null) {
+            return retVal = child.get(keys, idx + 1);
+        }
+        return null;
     }
 
     @Override
@@ -210,4 +195,53 @@ class MapWrapperAny extends Any {
             return value;
         }
     }
+
+    private class CalculateValueByCache {
+        private Object[] keys;
+        private int idx;
+        private Any retVal;
+        private Any child;
+
+        public CalculateValueByCache(Object[] keys, int idx, Any retVal, Any child) {
+            this.keys = keys;
+            this.idx = idx;
+            this.retVal = retVal;
+            this.child = child;
+        }
+
+        public Any getRetVal() {
+            return retVal;
+        }
+
+        public Any getChild() {
+            return child;
+        }
+
+        public CalculateValueByCache invoke() {
+                if (idx == keys.length) {
+                    retVal = MapWrapperAny.this;
+                    return this;
+                }
+                Object key = keys[idx];
+                if (isWildcard(key)) {
+                    HashMap<String, Any> result = new HashMap<String, Any>();
+                    Iterator<Map.Entry<String, Any>> it = cache.entrySet().iterator();
+                    while (it.hasNext()) {
+                        Map.Entry<String, Any> entry = it.next();
+                        Any mapped = entry.getValue().get(keys, idx + 1);
+                        if (mapped.valueType() != ValueType.INVALID) {
+                            result.put(entry.getKey(), mapped);
+                        }
+                    }
+                    retVal = Any.rewrap(result);
+                    return this;
+                }
+                child = fillCacheUntil(key);
+                if (child == null) {
+                    retVal = new NotFoundAny(keys, idx, object());
+                    return this;
+                }
+                return this;
+            }
+        }
 }
