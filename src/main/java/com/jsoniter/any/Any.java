@@ -330,7 +330,7 @@ public abstract class Any implements Iterable<Any> {
     private final static int wildcardHashCode = Character.valueOf('*').hashCode();
     private final static Character wildcard = '*';
 
-    protected boolean isWildcard(Object key) {
+    public boolean isWildcard(Object key) {
         return wildcardHashCode == key.hashCode() && wildcard.equals(key);
     }
 

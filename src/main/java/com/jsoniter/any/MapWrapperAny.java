@@ -193,7 +193,7 @@ class MapWrapperAny extends Any {
         }
     }
 
-    public class CalculateValueByCache {
+    private class CalculateValueByCache {
         private Object[] keys;
         private int idx;
         private Any retVal;
